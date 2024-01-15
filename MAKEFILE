@@ -1,0 +1,15 @@
+.PHONY: all build run clean
+
+BINARY_NAME=achievify
+
+all: build run
+
+build:
+	go build -o $(BINARY_NAME) main.go
+
+run:
+	./$(BINARY_NAME)
+
+clean:
+	go clean
+	rm -f $(BINARY_NAME)
