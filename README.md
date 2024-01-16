@@ -60,9 +60,9 @@ Achievify is a web application that helps users outline actionable steps to achi
 5. The response page will show the steps as checkboxes, allowing you to interactively track your progress.
 
 ### Preview
-![Main page](/assets/Main%20page.png)
-![Terminal](/assets/Terminal.png)
-![Response page](/assets/Response%20page.png)
+![Main](/assets/Main.png)
+![cmd](/assets/cmd.png)
+![Response](/assets/Response.png)
 
 ### License
 This project is licensed under the [MIT License](LICENSE).
