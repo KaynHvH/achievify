@@ -11,19 +11,9 @@ import (
 	"net/http"
 )
 
-func GetResponse(w http.ResponseWriter, r *http.Request) {
+func GetResponseHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	vars := mux.Vars(r)
 	id := vars["id"]
-
-	db := database.InitDB()
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			log.Println("Error closing database:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-	}(db)
 
 	response, err := database.GetResponseByID(db, id)
 	if err != nil {
@@ -39,7 +29,7 @@ func GetResponse(w http.ResponseWriter, r *http.Request) {
 		pointList = append(pointList, models.Point{ID: i + 1, Point: point})
 	}
 
-	tmpl, err := template.ParseFiles("./static/response.html")
+	tmpl, err := template.ParseFiles("./static/html/response.html")
 	if err != nil {
 		log.Println("Error parsing HTML template:", err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

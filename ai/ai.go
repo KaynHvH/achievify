@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	database "github.com/KaynHvH/achievify/database"
+	"github.com/KaynHvH/achievify/database"
 	"github.com/KaynHvH/achievify/utils"
 	"github.com/go-resty/resty/v2"
 	"github.com/gorilla/mux"
@@ -18,7 +18,7 @@ const (
 	apiEndpoint = "https://api.openai.com/v1/chat/completions"
 )
 
-func GenerateResponse(w http.ResponseWriter, r *http.Request) {
+func GenerateResponseHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -39,13 +39,12 @@ func GenerateResponse(w http.ResponseWriter, r *http.Request) {
 			"messages": []interface{}{
 				map[string]interface{}{"role": "user", "content": "Make the points that I need to accomplish to achieve the set goal that I will give at the end. Write your answer in bullet points, without additional comments. For example, if my goal is to write a book, tell me: 1. Choose the topic you would like to write about 2. Choose what should be in the book, etc. My goal is: " + userContent},
 			},
-			"max_tokens": 150,
+			"max_tokens": 300,
 		}).
 		Post(apiEndpoint)
 
 	if err != nil {
 		log.Fatalf("Error while sending the request: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 		return
 	}
 
@@ -64,6 +63,7 @@ func GenerateResponse(w http.ResponseWriter, r *http.Request) {
 	if !ok || len(choices) == 0 {
 		fmt.Println("No choices found in the response.")
 		http.Error(w, "No choices found in the response", http.StatusInternalServerError)
+		// for debugging
 		fmt.Println("DATA:", data)
 		fmt.Println("OK:")
 		return
@@ -71,16 +71,6 @@ func GenerateResponse(w http.ResponseWriter, r *http.Request) {
 
 	content := choices[0].(map[string]interface{})["message"].(map[string]interface{})["content"].(string)
 	content = utils.RemoveNewlines(content)
-
-	db := database.InitDB()
-	defer func(db *sql.DB) {
-		err := db.Close()
-		if err != nil {
-			log.Println("Error closing database:", err)
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-			return
-		}
-	}(db)
 
 	id, err := database.InsertResponse(db, content)
 	if err != nil {

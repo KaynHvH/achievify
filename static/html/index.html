@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Achievify - Goal achiever</title>
+        <link rel="stylesheet" href="../css/index.css">
+    </head>
+    <body>
+    <div id="container">
+        <h1 id="achieve-text">What do you want to achieve?</h1>
+
+        <input type="text" id="userInput" placeholder="E.g: become an astronaut" required>
+        <button id="generate-btn" type="button" onclick="generateResponse()">I want to achieve that!</button>
+
+        <div id="responseContainer"></div>
+    </div>
+        <script>
+            function generateResponse() {
+                alert("AI is thinking.");
+                const userInput = document.getElementById("userInput").value;
+
+                fetch(`http://localhost:3030/generate/${encodeURIComponent(userInput)}`)
+                    .then(response => response.text())
+                    .then(data => {
+                        const responseContainer = document.getElementById("responseContainer");
+                        responseContainer.innerText = data;
+
+                        // MOVING INTO THE RIGHT SITE WITH RESPONSE
+                        window.location.href = `http://localhost:3030/response/${data}`;
+                    })
+                    .catch(error => {
+                        console.error('Error generating response:', error);
+                    });
+            }
+        </script>
+    </body>
+</html>

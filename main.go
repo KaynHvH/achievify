@@ -1,18 +1,24 @@
 package main
 
 import (
-	"github.com/KaynHvH/achievify/ai"
-	"github.com/KaynHvH/achievify/handlers"
-	"github.com/gorilla/mux"
+	"database/sql"
+	"github.com/KaynHvH/achievify/database"
+	"github.com/KaynHvH/achievify/routers"
 	"log"
 	"net/http"
 )
 
 func main() {
-	router := mux.NewRouter()
+	db := database.InitDB()
+	defer func(db *sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Println("Error closing database:", err)
+			return
+		}
+	}(db)
 
-	router.HandleFunc("/generate/{content}", ai.GenerateResponse).Methods("GET")
-	router.HandleFunc("/response/{id}", handlers.GetResponse).Methods("GET")
+	router := routers.NewRouter(db)
 
 	log.Println("Server works properly")
 	if err := http.ListenAndServe(":3030", router); err != nil {

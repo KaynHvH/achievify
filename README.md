@@ -14,7 +14,15 @@ Achievify is a web application that helps users outline actionable steps to achi
 - **Web Framework**: Gorilla Mux
 - **Database**: SQLite
 - **AI Integration**: OpenAI GPT-3.5 Turbo
-- **Frontend**: HTML, JavaScript
+- **Frontend**: HTML, CSS, JavaScript
+
+### Todo
+- JWT Authentication
+- User registration and login
+- User's achieves
+- Notes for each achievements
+- Possibility of adding another goal on the response page
+- Better UI
 
 ### Installation
 1. Clone the repository:
@@ -27,7 +35,9 @@ Achievify is a web application that helps users outline actionable steps to achi
     go get -u github.com/gorilla/mux
     go get -u github.com/go-resty/resty/v2
     go get -u github.com/joho/godotenv
+    go get -u github.com/google/uuid
     go get -u github.com/mattn/go-sqlite3
+    go get -u golang.org/x/net
     ```
 3. Create a `.env` file in the root directory with the following content:
     ```env
